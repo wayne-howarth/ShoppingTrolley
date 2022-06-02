@@ -1,7 +1,6 @@
 using System;
 using NUnit.Framework;
 using Store;
-using Store.ShoppingCart;
 
 namespace ShoppingCartTests
 {
@@ -62,6 +61,40 @@ namespace ShoppingCartTests
             _Cart.Empty();
             Assert.True(_Cart.IsEmpty);
             Assert.IsTrue(_Cart.TotalItems() == 0);
+        }
+
+        [Test]
+        public void TestTotalCostOfAnEmptyBasket()
+        {
+            Assert.True(_Cart.TotalCost(null) == 0);
+            _Cart.Add(_Product1, 1);
+            _Cart.Empty();
+            Assert.True(_Cart.TotalCost(null) == 0);
+        }
+
+        [Test]
+        public void TestTotalCost()
+        {
+            _Cart.Add(_Product1, 1);
+            Assert.True(_Cart.TotalCost(null) == 10.00);
+        }
+
+        [Test]
+        public void TestTotalCostWithThreeForFortyPoundDiscount()
+        {
+            _Cart.Add(_Product2, 3);
+            Assert.True(_Cart.TotalCost(null) == 40.00);
+            _Cart.Add(_Product2, 3);
+            Assert.True(_Cart.TotalCost(null) == 80.00);
+        }
+
+        [Test]
+        public void TestTotalCostWithPercentageDiscount()
+        {
+            _Cart.Add(_Product4, 2);
+            Assert.True(_Cart.TotalCost(null) == 110 * 0.75);
+            _Cart.Add(_Product4, 2);
+            Assert.True(_Cart.TotalCost(null) == 220 * 0.75);
         }
     }
 }

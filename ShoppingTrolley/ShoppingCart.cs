@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Store;
 
-namespace Store.ShoppingCart
+namespace Store
 {
     public class ShoppingCart
     {
@@ -23,6 +23,7 @@ namespace Store.ShoppingCart
                 return _Contents.Count == 0;
             }
         }
+
         public void Add(Product product, int quantity)
         {
             ShoppingCartItem existing = _Contents.FirstOrDefault(p => p.ProductId == product.ProductId);
@@ -43,6 +44,7 @@ namespace Store.ShoppingCart
                 existing.Qty = existing.Qty + quantity;
             }
         }
+
         public void Remove(Product product)
         {
             ShoppingCartItem item = _Contents.FirstOrDefault(p => p.ProductId == product.ProductId);
@@ -52,13 +54,27 @@ namespace Store.ShoppingCart
                 _Contents.Remove(item);
             }
         }
+
         public void Empty()
         {
             _Contents.Clear();
         }
+
         public int TotalItems()
         {
             return _Contents.Select(item => item.Qty).Sum();
+        }
+
+        public double TotalCost(IDiscountCalculator dc)
+        {
+            var total = _Contents.Select(item => item.Qty * item.UnitCost).Sum();
+
+            if (dc != null)
+            {
+                total = total - dc.TotalDiscount(this);
+            }
+
+            return total;
         }
     }
 }
