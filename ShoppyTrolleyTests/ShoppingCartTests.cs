@@ -11,6 +11,7 @@ namespace ShoppingCartTests
         private Product? _Product2;
         private Product? _Product3;
         private Product? _Product4;
+        private IDiscountCalculator _CurrentPromotion;
 
         [SetUp]
         public void Setup()
@@ -20,6 +21,7 @@ namespace ShoppingCartTests
             _Product2 = Warehouse.Instance.Find(new Guid("{A1863103-63C2-4184-B7E5-D3B4EFC411A4}"));
             _Product3 = Warehouse.Instance.Find(new Guid("{891DAACE-9FBF-41D7-872F-B1DC7DD25D1D}"));
             _Product4 = Warehouse.Instance.Find(new Guid("{50B506A7-A219-4156-9D4A-5F17FD969007}"));
+            _CurrentPromotion = new DiscountCalculator();
         }
 
         [Test]
@@ -66,35 +68,35 @@ namespace ShoppingCartTests
         [Test]
         public void TestTotalCostOfAnEmptyBasket()
         {
-            Assert.True(_Cart.TotalCost(null) == 0);
+            Assert.True(_Cart.TotalCost(_CurrentPromotion) == 0);
             _Cart.Add(_Product1, 1);
             _Cart.Empty();
-            Assert.True(_Cart.TotalCost(null) == 0);
+            Assert.True(_Cart.TotalCost(_CurrentPromotion) == 0);
         }
 
         [Test]
         public void TestTotalCost()
         {
             _Cart.Add(_Product1, 1);
-            Assert.True(_Cart.TotalCost(null) == 10.00);
+            Assert.True(_Cart.TotalCost(_CurrentPromotion) == 10.00);
         }
 
         [Test]
         public void TestTotalCostWithThreeForFortyPoundDiscount()
         {
             _Cart.Add(_Product2, 3);
-            Assert.True(_Cart.TotalCost(null) == 40.00);
+            Assert.True(_Cart.TotalCost(_CurrentPromotion) == 40.00);
             _Cart.Add(_Product2, 3);
-            Assert.True(_Cart.TotalCost(null) == 80.00);
+            Assert.True(_Cart.TotalCost(_CurrentPromotion) == 80.00);
         }
 
         [Test]
         public void TestTotalCostWithPercentageDiscount()
         {
             _Cart.Add(_Product4, 2);
-            Assert.True(_Cart.TotalCost(null) == 110 * 0.75);
+            Assert.True(_Cart.TotalCost(_CurrentPromotion) == 110 * 0.75);
             _Cart.Add(_Product4, 2);
-            Assert.True(_Cart.TotalCost(null) == 220 * 0.75);
+            Assert.True(_Cart.TotalCost(_CurrentPromotion) == 220 * 0.75);
         }
     }
 }
